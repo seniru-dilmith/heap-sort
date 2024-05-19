@@ -31,18 +31,22 @@ void exchange(int &a, int &b) {
 
 // Function to maintain the max-heap property
 void MAX_HEAPIFY(std::vector<int>& A, int heap_size, int i) {
+    // Get the indices of the left and right children of the node at index i
     int l = LEFT(i);
     int r = RIGHT(i);
     int largest;
 
+    // Check if the left child is larger than the current node
     if (l < heap_size && A[l] > A[i])
         largest = l;
     else
         largest = i;
 
+    // Check if the right child is larger than the largest so far
     if (r < heap_size && A[r] > A[largest])
         largest = r;
 
+    // If the largest element is not the current node, swap and recurse
     if (largest != i) {
         exchange(A[i], A[largest]);
         MAX_HEAPIFY(A, heap_size, largest);
@@ -52,6 +56,7 @@ void MAX_HEAPIFY(std::vector<int>& A, int heap_size, int i) {
 // Function to build a max-heap from an unsorted array
 void BUILD_MAX_HEAP(std::vector<int>& A) {
     int heap_size = A.size();
+    // Start from the last non-leaf node and heapify each node
     for (int i = (heap_size / 2) - 1; i >= 0; i--) {
         MAX_HEAPIFY(A, heap_size, i);
     }
@@ -59,18 +64,20 @@ void BUILD_MAX_HEAP(std::vector<int>& A) {
 
 // Function to perform heap sort
 void HEAPSORT(std::vector<int>& A) {
+    // Build a max-heap from the input array
     BUILD_MAX_HEAP(A);
     int heap_size = A.size();
+    // Extract elements from the heap one by one
     for (int i = heap_size - 1; i >= 1; i--) {
-        exchange(A[0], A[i]);  // Exchange the root (maximum value) with the last element
+        exchange(A[0], A[i]);  // Move the current root to the end
         heap_size--;  // Reduce the heap size
-        MAX_HEAPIFY(A, heap_size, 0);
+        MAX_HEAPIFY(A, heap_size, 0);  // Heapify the reduced heap
     }
 }
 
 // Function to return the maximum element of the heap
 int HEAPMAXIMUM(const std::vector<int>& A) {
-    return A[0];
+    return A[0];  // The maximum element is at the root
 }
 
 // Function to extract the maximum element from the heap
@@ -79,11 +86,11 @@ int HEAPEXTRACTMAX(std::vector<int>& A) {
         std::cerr << "Heap underflow" << std::endl;
         return std::numeric_limits<int>::min();  // Return negative infinity
     }
-    int max = A[0];
-    A[0] = A.back();
-    A.pop_back();
-    MAX_HEAPIFY(A, A.size(), 0);
-    return max;
+    int max = A[0];  // The maximum element is at the root
+    A[0] = A.back();  // Move the last element to the root
+    A.pop_back();  // Remove the last element
+    MAX_HEAPIFY(A, A.size(), 0);  // Heapify the root
+    return max;  // Return the maximum element
 }
 
 // Function to increase the key of a node in the heap
@@ -92,7 +99,8 @@ void HEAPINCREASEKEY(std::vector<int>& A, int i, int key) {
         std::cerr << "New key is smaller than the current key" << std::endl;
         return;
     }
-    A[i] = key;
+    A[i] = key;  // Set the new key
+    // Restore the max-heap property by moving the node up the tree
     while (i > 0 && A[i] > A[(i - 1) / 2]) {
         exchange(A[i], A[(i - 1) / 2]);
         i = (i - 1) / 2;
@@ -102,7 +110,7 @@ void HEAPINCREASEKEY(std::vector<int>& A, int i, int key) {
 // Function to insert a new key into the heap
 void MAX_HEAPINSERT(std::vector<int>& A, int key) {
     A.push_back(std::numeric_limits<int>::min());  // Insert negative infinity as a placeholder
-    HEAPINCREASEKEY(A, A.size() - 1, key);
+    HEAPINCREASEKEY(A, A.size() - 1, key);  // Increase the key to the desired value
 }
 
 // Utility function to print the array
@@ -118,21 +126,26 @@ int main() {
     std::cout << "Original array: ";
     printArray(A);
 
+    // Build a max-heap from the original array
     BUILD_MAX_HEAP(A);
     std::cout << "Max heap: ";
     printArray(A);
 
+    // Display the maximum element in the heap
     std::cout << "Maximum element in the heap: " << HEAPMAXIMUM(A) << std::endl;
 
+    // Extract the maximum element from the heap
     std::cout << "Extracted maximum element: " << HEAPEXTRACTMAX(A) << std::endl;
     std::cout << "Heap after extraction: ";
     printArray(A);
 
+    // Increase the key at index 2 to 20
     std::cout << "Increase key at index 2 to 20" << std::endl;
     HEAPINCREASEKEY(A, 2, 20);
     std::cout << "Heap after increasing key: ";
     printArray(A);
 
+    // Insert a new element 15 into the heap
     std::cout << "Inserting new element 15 into the heap" << std::endl;
     MAX_HEAPINSERT(A, 15);
     std::cout << "Heap after insertion: ";
